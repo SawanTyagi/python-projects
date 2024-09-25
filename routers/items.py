@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Query, Path
+from fastapi import APIRouter, Query, Path, Body
 
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field
 
+from ..model_classes.user import User
 from ..model_classes.item import Item
 
 router = APIRouter()
@@ -59,3 +60,16 @@ class FilterModel(BaseModel):
 @router.get("/getQueryModelParams")
 async def get_query_model_param(query_filter: Annotated[FilterModel, Query()]):
     return query_filter
+
+
+@router.post('/mix-query-path-body-parameter/{item_id}')
+async def mix_query_path_body_parameter(
+        item_id: int,
+        item: Item,
+        user: User,
+        importance: Annotated[int, Body(gt=0)],
+        q: str | None = None):
+    results = {"item_id": item_id, "item": item, "user": user, "importance": importance}
+    if q:
+        results.update({"q": q})
+    return results
