@@ -12,4 +12,4 @@ class Item(BaseModel):
     price: float = Field(ge=0, description="The price must be greater than zero", )
     tax: float | None = None,
     tags: set[str] = set(),
-    image: Image | None = None
+    image: Image | None = Field(default=None)

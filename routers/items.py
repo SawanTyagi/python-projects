@@ -36,7 +36,22 @@ async def create_item(item: Item):
 
 @router.put('/items/{item_id}')
 async def update_item(item_id: Annotated[int, Path(title="The ID of item to get")],
-                      item: Item,
+                      item: Annotated[Item, Body(examples=[
+                          {
+                              "name": "Foo",
+                              "description": "A very nice Item",
+                              "price": 35.4,
+                              "tax": 3.2,
+                          },
+                          {
+                              "name": "Bar",
+                              "price": "35.4",
+                          },
+                          {
+                              "name": "Baz",
+                              "price": "thirty five point four",
+                          },
+                      ], )],
                       q: Annotated[str | None, Query(max_length=50, min_length=3)] = None):
     result = {"item_id": item_id, **item.model_dump()}
     if q:
@@ -44,8 +59,8 @@ async def update_item(item_id: Annotated[int, Path(title="The ID of item to get"
     return result
 
 
-@router.get('/items_with_query_paramerter_multiple_values/')
-async def items_with_query_paramerter_multiple_values(
+@router.get('/items_with_query_parameter_multiple_values/')
+async def items_with_query_parameter_multiple_values(
         q: Annotated[list[str] | None, Query(max_length=50, min_length=3)] = None):
     return {"q": q}
 
